@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TravelSense — Sign In / Sign Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12261e;
+    --forest-dark:#0b2f24;
+    --forest:#0f5c42;
+    --forest-line: rgba(255,255,255,0.14);
+    --cream:#faf6ef;
+    --paper:#ffffff;
+    --amber:#e0972c;
+    --terracotta:#c9622b;
+    --muted:#6b7d75;
+    --border:#e4ded1;
+    --shadow: 0 24px 60px rgba(18, 38, 30, 0.14);
+    --surface: rgba(255,255,255,0.72);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Work Sans', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(224,151,44,0.14), transparent 30%),
+      radial-gradient(circle at 85% 18%, rgba(15,92,66,0.12), transparent 28%),
+      linear-gradient(180deg, #fcfaf5 0%, #f5efe4 100%);
+    -webkit-font-smoothing:antialiased;
+  }
+  .screen{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+  }
+  @media (max-width: 860px){
+    .screen{ grid-template-columns: 1fr; }
+    .brand-panel{ min-height:280px; }
+  }
+
+  /* ---------- Left brand panel ---------- */
+  .brand-panel{
+    position:relative;
+    background:
+      radial-gradient(120% 140% at 15% 10%, rgba(255,255,255,0.07) 0%, transparent 32%),
+      radial-gradient(120% 140% at 15% 10%, #12523d 0%, var(--forest) 38%, var(--forest-dark) 100%);
+    color:#f2efe6;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding: 48px 52px;
+  }
+  .contour-lines{
+    position:absolute;
+    inset:0;
+    opacity:0.55;
+    pointer-events:none;
+  }
+  .brand-top{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand-mark{
+    width:34px;height:34px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .brand-name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.15rem;
+    letter-spacing:0.01em;
+  }
+
+  .brand-mid{
+    position:relative;
+    z-index:2;
+    max-width: 420px;
+  }
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:0.72rem;
+    color:#d9c9a3;
+    margin-bottom:18px;
+    display:block;
+  }
+  .headline{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: clamp(2.1rem, 3.4vw, 2.9rem);
+    line-height:1.08;
+    margin:0 0 18px 0;
+  }
+  .headline em{
+    font-style:italic;
+    color:var(--amber);
+  }
+  .sub{
+    font-size:0.98rem;
+    line-height:1.6;
+    color:#d7e2dc;
+    max-width:360px;
+  }
+
+  /* compass signature */
+  .compass-wrap{
+    position:relative; z-index:2;
+    display:flex; align-items:center; gap:16px;
+    margin-top:38px;
+  }
+  .compass{
+    width:56px;height:56px;
+    flex-shrink:0;
+  }
+  .compass svg{ width:100%; height:100%; transition: transform 0.6s cubic-bezier(.22,1,.36,1); }
+  .compass-wrap:hover .compass svg{ transform: rotate(28deg); }
+  .compass-caption{
+    font-size:0.78rem;
+    color:#b9c9c0;
+    line-height:1.5;
+    max-width:210px;
+  }
+  .compass-caption strong{ color:#f2efe6; font-weight:500; }
+
+  .brand-bottom{
+    position:relative; z-index:2;
+    display:flex;
+    gap:28px;
+    font-size:0.78rem;
+    color:#a9bdb3;
+    border-top:1px solid var(--forest-line);
+    padding-top:18px;
+  }
+  .brand-bottom span b{ color:#e8e2d2; font-weight:600; }
+
+  /* ---------- Right form panel ---------- */
+  .form-panel{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 40px 32px;
+    background: linear-gradient(180deg, rgba(250,246,239,0.65) 0%, rgba(250,246,239,0.92) 100%);
+  }
+  .form-card{
+    width:100%;
+    max-width:440px;
+    background:var(--surface);
+    border:1px solid rgba(228,222,209,0.78);
+    border-radius:24px;
+    box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    padding:28px;
+  }
+  .form-head{ margin-bottom: 22px; }
+  .form-head .eyebrow-dark{
+    text-transform:uppercase;
+    letter-spacing:0.13em;
+    font-size:0.7rem;
+    color:var(--terracotta);
+    font-weight:600;
+    display:block;
+    margin-bottom:10px;
+  }
+  .form-head h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:2rem;
+    margin:0 0 8px 0;
+    color:var(--ink);
+  }
+  .form-head p{
+    margin:0;
+    color:var(--muted);
+    font-size:0.92rem;
+  }
+  .form-head p a{ color:var(--forest); font-weight:600; text-decoration:none; }
+  .form-head p a:hover{ text-decoration:underline; }
+
+  .auth-switcher{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:8px;
+    padding:6px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:rgba(255,255,255,0.7);
+    margin-bottom:18px;
+  }
+  .auth-switcher button{
+    border:none;
+    background:transparent;
+    border-radius:10px;
+    padding:12px 14px;
+    font-family:'Work Sans', sans-serif;
+    font-size:0.93rem;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+  .auth-switcher button:hover{ background:rgba(15,92,66,0.06); color:var(--ink); }
+  .auth-switcher button.is-active{
+    background:var(--forest);
+    color:#fff;
+    box-shadow: 0 10px 24px rgba(15,92,66,0.18);
+  }
+  .auth-switcher button:focus-visible,
+  .text-link:focus-visible,
+  .forgot:focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+
+  .auth-panels{ position:relative; }
+  .auth-form{
+    display:none;
+    flex-direction:column;
+    gap:18px;
+  }
+  .auth-form.is-active{ display:flex; }
+  form{ display:flex; flex-direction:column; gap:18px; }
+
+  .field{ display:flex; flex-direction:column; gap:7px; }
+  .field label{
+    font-size:0.82rem;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .field input{
+    font-family:'Work Sans', sans-serif;
+    font-size:0.95rem;
+    padding: 12px 14px;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    background:var(--paper);
+    color:var(--ink);
+    outline:none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field input::placeholder{ color:#b7ae9c; }
+  .field input:focus{
+    border-color:var(--forest);
+    box-shadow: 0 0 0 3px rgba(15,92,66,0.14);
+  }
+  .field input:focus-visible{
+    border-color:var(--forest);
+    box-shadow: 0 0 0 3px rgba(15,92,66,0.18);
+  }
+  .password-wrap{
+    position:relative;
+  }
+  .password-wrap input{
+    width:100%;
+    padding-right:52px;
+  }
+  .toggle-password{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    border:none;
+    background:transparent;
+    color:var(--forest);
+    font:inherit;
+    font-size:0.8rem;
+    font-weight:600;
+    cursor:pointer;
+    padding:4px 6px;
+    border-radius:6px;
+  }
+  .toggle-password:hover{ background:rgba(15,92,66,0.08); }
+  .toggle-password:focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+  .field.error input{ border-color:#c0392b; }
+  .field-error{
+    font-size:0.78rem;
+    color:#c0392b;
+    display:none;
+  }
+  .field.error .field-error{ display:block; }
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:0.85rem;
+  }
+  .row-stack{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:12px;
+  }
+  .remember{ display:flex; align-items:center; gap:8px; color:var(--muted); }
+  .remember input{ accent-color: var(--forest); width:15px; height:15px; }
+  .forgot{ color:var(--forest); text-decoration:none; font-weight:600; }
+  .forgot:hover{ text-decoration:underline; }
+
+  .helper-text{
+    margin-top:-8px;
+    font-size:0.78rem;
+    color:#7b7567;
+    line-height:1.45;
+  }
+  .helper-text strong{ color:var(--ink); }
+
+  .btn-primary{
+    margin-top:6px;
+    padding: 13px 18px;
+    border:none;
+    border-radius:8px;
+    background: var(--forest);
+    color:#fff;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    cursor:pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .btn-primary:hover{ background:#0d4d38; }
+  .btn-primary:active{ transform: translateY(1px); }
+  .btn-primary:focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+
+  .divider{
+    display:flex; align-items:center; gap:12px;
+    color:#a79f8d; font-size:0.78rem;
+    margin: 6px 0 2px 0;
+  }
+  .divider::before, .divider::after{
+    content:""; flex:1; height:1px; background:var(--border);
+  }
+
+  .btn-google{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:11px 18px;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    background:#fff;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:0.9rem;
+    color:var(--ink);
+    cursor:pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .btn-google:hover{ border-color:#c9c1ab; background:#fdfbf6; }
+  .btn-google:focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+
+  .status-msg{
+    text-align:center;
+    font-size:0.85rem;
+    color:var(--forest);
+    min-height:18px;
+    margin-top:2px;
+  }
+
+  .auth-footer{
+    text-align:center;
+    margin-top:-4px;
+    font-size:0.86rem;
+    color:var(--muted);
+  }
+  .text-link{
+    color:var(--forest);
+    text-decoration:none;
+    font-weight:600;
+  }
+  .text-link:hover{ text-decoration:underline; }
+
+  .hidden{ display:none !important; }
+
+  @media (prefers-reduced-motion: reduce){
+    .compass svg{ transition:none; }
+    .auth-switcher button,
+    .btn-primary,
+    .btn-google,
+    .field input{ transition:none; }
+  }
+
+  @media (max-width: 860px){
+    .form-card{ padding:22px; }
+  }
+
+  @media (max-width: 560px){
+    .row-between,
+    .row-stack{ grid-template-columns:1fr; display:grid; gap:12px; }
+    .row-between{ gap:12px; }
+    .row-between{ justify-content:initial; }
+    .form-card{ border-radius:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <!-- LEFT: brand / signature panel -->
+  <div class="brand-panel">
+    <svg class="contour-lines" viewBox="0 0 600 800" preserveAspectRatio="none">
+      <path d="M-20 620 C 100 560, 180 680, 280 600 S 460 520, 620 610" stroke="#ffffff" stroke-opacity="0.10" stroke-width="2" fill="none"/>
+      <path d="M-20 660 C 110 600, 190 720, 300 640 S 470 560, 620 650" stroke="#ffffff" stroke-opacity="0.09" stroke-width="2" fill="none"/>
+      <path d="M-20 700 C 120 640, 200 760, 320 680 S 480 600, 620 690" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2" fill="none"/>
+      <path d="M-20 60 C 120 20, 220 110, 340 40 S 520 -10, 620 60" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1.5" fill="none"/>
+      <path d="M-20 100 C 130 60, 230 150, 350 80 S 530 30, 620 100" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1.5" fill="none"/>
+      <circle cx="205" cy="330" r="3" fill="#e0972c" opacity="0.85"/>
+      <circle cx="380" cy="410" r="3" fill="#e0972c" opacity="0.6"/>
+      <circle cx="290" cy="470" r="3" fill="#e0972c" opacity="0.7"/>
+    </svg>
+
+    <div class="brand-top">
+      <div class="brand-mark">
+        <svg viewBox="0 0 40 40" width="34" height="34" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="#e0972c" stroke-width="2"/>
+          <path d="M20 9 L23 20 L20 31 L17 20 Z" fill="#e0972c"/>
+        </svg>
+      </div>
+      <span class="brand-name">TravelSense</span>
+    </div>
+
+    <div class="brand-mid">
+      <span class="eyebrow">Smart Tourism Discovery</span>
+      <h1 class="headline">Explore Bangladesh<br><em>with confidence.</em></h1>
+      <p class="sub">Sign in to pick up your saved destinations, wishlist, and trip plans — from Cox's Bazar to the hidden trails of Sitakunda.</p>
+
+      <div class="compass-wrap">
+        <div class="compass">
+          <svg viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="30" stroke="#e0972c" stroke-width="1.4" opacity="0.6"/>
+            <circle cx="32" cy="32" r="23" stroke="#e0972c" stroke-width="1" opacity="0.35"/>
+            <path d="M32 10 L38 32 L32 54 L26 32 Z" fill="#e0972c"/>
+            <path d="M10 32 L32 26 L54 32 L32 38 Z" fill="#f2efe6" opacity="0.7"/>
+            <circle cx="32" cy="32" r="3" fill="#f2efe6"/>
+          </svg>
+        </div>
+        <div class="compass-caption"><strong>One platform.</strong><br>Discover, plan, and travel safely — all in one place.</div>
+      </div>
+    </div>
+
+    <div class="brand-bottom">
+      <span><b>50+</b> destinations</span>
+      <span><b>Moderator</b>-approved reviews</span>
+      <span><b>Safety</b> guidance built in</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: login form -->
+  <div class="form-panel">
+    <div class="form-card">
+      <div class="form-head">
+        <span class="eyebrow-dark">Welcome back</span>
+        <h1 id="authTitle">Sign in to TravelSense</h1>
+        <p id="authSubtitle">New here? <a href="#" id="signupLink">Create an account</a></p>
+      </div>
+
+      <div class="auth-switcher" role="tablist" aria-label="Authentication mode">
+        <button type="button" class="is-active" id="loginTab" data-mode="login" role="tab" aria-selected="true">Sign in</button>
+        <button type="button" id="signupTab" data-mode="signup" role="tab" aria-selected="false">Create account</button>
+      </div>
+
+      <div class="auth-panels">
+        <form id="loginForm" class="auth-form is-active" novalidate>
+          <div class="field" id="loginEmailField">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required>
+            <span class="field-error">Please enter a valid email.</span>
+          </div>
+
+          <div class="field" id="loginPasswordField">
+            <label for="loginPassword">Password</label>
+            <div class="password-wrap">
+              <input type="password" id="loginPassword" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+              <button type="button" class="toggle-password" data-target="loginPassword" aria-pressed="false" aria-label="Show password">Show</button>
+            </div>
+            <span class="field-error">Password is required.</span>
+          </div>
+
+          <div class="row-between">
+            <label class="remember">
+              <input type="checkbox" id="remember" name="remember">
+              Remember me
+            </label>
+            <a href="#" class="forgot" id="forgotPasswordLink">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-primary">Sign in</button>
+
+          <div class="divider">or continue with</div>
+
+          <button type="button" class="btn-google" id="googleBtnLogin">
+            <svg width="18" height="18" viewBox="0 0 18 18">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="status-msg" id="statusMsg" aria-live="polite"></div>
+        </form>
+
+        <form id="signupForm" class="auth-form" novalidate>
+          <div class="row-stack">
+            <div class="field" id="fullNameField">
+              <label for="fullName">Full name</label>
+              <input type="text" id="fullName" name="fullName" placeholder="Your name" autocomplete="name" required>
+              <span class="field-error">Full name is required.</span>
+            </div>
+
+            <div class="field" id="signupEmailField">
+              <label for="signupEmail">Email</label>
+              <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required>
+              <span class="field-error">Please enter a valid email.</span>
+            </div>
+          </div>
+
+          <div class="row-stack">
+            <div class="field" id="signupPasswordField">
+              <label for="signupPassword">Password</label>
+              <div class="password-wrap">
+                <input type="password" id="signupPassword" name="password" placeholder="Create a password" autocomplete="new-password" required>
+                <button type="button" class="toggle-password" data-target="signupPassword" aria-pressed="false" aria-label="Show password">Show</button>
+              </div>
+              <span class="field-error">Use 8+ chars with upper, lower, number, and symbol.</span>
+            </div>
+
+            <div class="field" id="confirmPasswordField">
+              <label for="confirmPassword">Confirm password</label>
+              <div class="password-wrap">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required>
+                <button type="button" class="toggle-password" data-target="confirmPassword" aria-pressed="false" aria-label="Show password">Show</button>
+              </div>
+              <span class="field-error">Passwords must match.</span>
+            </div>
+          </div>
+
+          <p class="helper-text"><strong>Tip:</strong> use a strong password with at least one number and one symbol for a better demo.</p>
+
+          <label class="remember">
+            <input type="checkbox" id="termsAccepted" name="termsAccepted" required>
+            I agree to the Terms and Privacy Policy
+          </label>
+
+          <button type="submit" class="btn-primary">Create account</button>
+
+          <div class="divider">or continue with</div>
+
+          <button type="button" class="btn-google" id="googleBtnSignup">
+            <svg width="18" height="18" viewBox="0 0 18 18">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="status-msg" id="signupStatusMsg" aria-live="polite"></div>
+          <div class="auth-footer">Already have an account? <a href="#" class="text-link" id="signinLink">Sign in</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API_BASE = window.AUTH_API_BASE || '/api';
+  const HOME_URL = window.HOME_URL || '/';
+  const authTitle = document.getElementById('authTitle');
+  const authSubtitle = document.getElementById('authSubtitle');
+  const loginTab = document.getElementById('loginTab');
+  const signupTab = document.getElementById('signupTab');
+  const form = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+  const loginEmailField = document.getElementById('loginEmailField');
+  const loginPasswordField = document.getElementById('loginPasswordField');
+  const signupEmailField = document.getElementById('signupEmailField');
+  const signupPasswordField = document.getElementById('signupPasswordField');
+  const confirmPasswordField = document.getElementById('confirmPasswordField');
+  const fullNameField = document.getElementById('fullNameField');
+  const loginEmail = document.getElementById('loginEmail');
+  const loginPassword = document.getElementById('loginPassword');
+  const signupEmail = document.getElementById('signupEmail');
+  const signupPassword = document.getElementById('signupPassword');
+  const confirmPassword = document.getElementById('confirmPassword');
+  const fullName = document.getElementById('fullName');
+  const statusMsg = document.getElementById('statusMsg');
+  const signupStatusMsg = document.getElementById('signupStatusMsg');
+  const googleBtnLogin = document.getElementById('googleBtnLogin');
+  const googleBtnSignup = document.getElementById('googleBtnSignup');
+  const signupLink = document.getElementById('signupLink');
+  const signinLink = document.getElementById('signinLink');
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  const passwordToggleButtons = document.querySelectorAll('.toggle-password');
+
+  let activeMode = 'login';
+
+  function isValidEmail(value){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function isStrongPassword(value){
+    return value.length >= 8 && /[a-z]/.test(value) && /[A-Z]/.test(value) && /\d/.test(value) && /[^A-Za-z0-9]/.test(value);
+  }
+
+  function setFieldState(field, isValid){
+    field.classList.toggle('error', !isValid);
+  }
+
+  function clearFieldStates(fieldList){
+    fieldList.forEach(function(field){
+      field.classList.remove('error');
+    });
+  }
+
+  function setStatus(message, isError, target){
+    const element = target || statusMsg;
+    element.style.color = isError ? '#c0392b' : 'var(--forest)';
+    element.textContent = message;
+  }
+
+  function setMode(mode){
+    activeMode = mode;
+    const loginActive = mode === 'login';
+
+    loginTab.classList.toggle('is-active', loginActive);
+    signupTab.classList.toggle('is-active', !loginActive);
+    loginTab.setAttribute('aria-selected', String(loginActive));
+    signupTab.setAttribute('aria-selected', String(!loginActive));
+
+    form.classList.toggle('is-active', loginActive);
+    signupForm.classList.toggle('is-active', !loginActive);
+
+    authTitle.textContent = loginActive ? 'Sign in to TravelSense' : 'Create your TravelSense account';
+    authSubtitle.innerHTML = loginActive
+      ? 'New here? <a href="#" id="signupLink">Create an account</a>'
+      : 'Already registered? <a href="#" id="signinLink">Sign in</a>';
+
+    const updatedSignupLink = document.getElementById('signupLink');
+    const updatedSigninLink = document.getElementById('signinLink');
+
+    if(updatedSignupLink){
+      updatedSignupLink.addEventListener('click', function(e){
+        e.preventDefault();
+        setMode('signup');
+      });
+    }
+
+    if(updatedSigninLink){
+      updatedSigninLink.addEventListener('click', function(e){
+        e.preventDefault();
+        setMode('login');
+      });
+    }
+
+    if(loginActive){
+      signupStatusMsg.textContent = '';
+      clearFieldStates([loginEmailField, loginPasswordField, signupEmailField, signupPasswordField, confirmPasswordField, fullNameField]);
+      statusMsg.textContent = '';
+      loginEmail.focus();
+    } else {
+      statusMsg.textContent = '';
+      clearFieldStates([loginEmailField, loginPasswordField, signupEmailField, signupPasswordField, confirmPasswordField, fullNameField]);
+      signupStatusMsg.textContent = '';
+      fullName.focus();
+    }
+  }
+
+  function togglePasswordVisibility(button){
+    const targetId = button.getAttribute('data-target');
+    const target = document.getElementById(targetId);
+    const isHidden = target.type === 'password';
+
+    target.type = isHidden ? 'text' : 'password';
+    button.textContent = isHidden ? 'Hide' : 'Show';
+    button.setAttribute('aria-pressed', String(isHidden));
+    button.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+  }
+
+  async function postJson(path, payload){
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    });
+
+    let result = {};
+    try{
+      result = await res.json();
+    } catch (error){
+      result = {};
+    }
+
+    return { res, result };
+  }
+
+  loginTab.addEventListener('click', function(){ setMode('login'); });
+  signupTab.addEventListener('click', function(){ setMode('signup'); });
+
+  signupLink.addEventListener('click', function(e){
+    e.preventDefault();
+    setMode('signup');
+  });
+
+  signinLink.addEventListener('click', function(e){
+    e.preventDefault();
+    setMode('login');
+  });
+
+  forgotPasswordLink.addEventListener('click', function(e){
+    e.preventDefault();
+    setStatus('Connect this link to your password reset flow.', false, statusMsg);
+  });
+
+  passwordToggleButtons.forEach(function(button){
+    button.addEventListener('click', function(){
+      togglePasswordVisibility(button);
+    });
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    let valid = true;
+
+    if(!isValidEmail(loginEmail.value.trim())){
+      setFieldState(loginEmailField, false);
+      valid = false;
+    } else {
+      setFieldState(loginEmailField, true);
+    }
+
+    if(loginPassword.value.trim().length === 0){
+      setFieldState(loginPasswordField, false);
+      valid = false;
+    } else {
+      setFieldState(loginPasswordField, true);
+    }
+
+    if(!valid){
+      statusMsg.textContent = '';
+      return;
+    }
+
+    const submitBtn = form.querySelector('.btn-primary');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in...';
+    statusMsg.textContent = '';
+
+    try{
+      const { res, result } = await postJson('/login', {
+        email: loginEmail.value.trim(),
+        password: loginPassword.value,
+        remember: document.getElementById('remember').checked
+      });
+
+      if(res.ok){
+        setStatus(result.message || 'Signed in — welcome back to TravelSense.', false, statusMsg);
+        window.location.href = HOME_URL;
+      } else {
+        setStatus(result.error || 'Something went wrong. Please try again.', true, statusMsg);
+      }
+    } catch(err){
+      setStatus('Could not reach the server. Check that your backend is running.', true, statusMsg);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sign in';
+    }
+  });
+
+  signupForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    let valid = true;
+
+    if(fullName.value.trim().length < 2){
+      setFieldState(fullNameField, false);
+      valid = false;
+    } else {
+      setFieldState(fullNameField, true);
+    }
+
+    if(!isValidEmail(signupEmail.value.trim())){
+      setFieldState(signupEmailField, false);
+      valid = false;
+    } else {
+      setFieldState(signupEmailField, true);
+    }
+
+    if(!isStrongPassword(signupPassword.value.trim())){
+      setFieldState(signupPasswordField, false);
+      valid = false;
+    } else {
+      setFieldState(signupPasswordField, true);
+    }
+
+    if(confirmPassword.value.trim() !== signupPassword.value.trim() || confirmPassword.value.trim().length === 0){
+      setFieldState(confirmPasswordField, false);
+      valid = false;
+    } else {
+      setFieldState(confirmPasswordField, true);
+    }
+
+    if(!document.getElementById('termsAccepted').checked){
+      valid = false;
+      setStatus('You need to accept the terms to create an account.', true, signupStatusMsg);
+    }
+
+    if(!valid){
+      if(!signupStatusMsg.textContent){
+        setStatus('Please fix the highlighted fields.', true, signupStatusMsg);
+      }
+      return;
+    }
+
+    const submitBtn = signupForm.querySelector('.btn-primary');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account...';
+    signupStatusMsg.textContent = '';
+
+    try{
+      const { res, result } = await postJson('/register', {
+        fullName: fullName.value.trim(),
+        email: signupEmail.value.trim(),
+        password: signupPassword.value
+      });
+
+      if(res.ok){
+        setStatus(result.message || 'Account created. You can now sign in.', false, signupStatusMsg);
+      } else {
+        setStatus(result.error || 'Could not create your account.', true, signupStatusMsg);
+      }
+    } catch(error){
+      setStatus('Could not reach the server. Check that your backend is running.', true, signupStatusMsg);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create account';
+    }
+  });
+
+  googleBtnLogin.addEventListener('click', function(){
+    setStatus('Connect this button to your Google OAuth flow.', false, statusMsg);
+  });
+
+  googleBtnSignup.addEventListener('click', function(){
+    setStatus('Connect this button to your Google OAuth flow.', false, signupStatusMsg);
+  });
+
+  setMode('login');
+</script>
+
+</body>
+</html>
